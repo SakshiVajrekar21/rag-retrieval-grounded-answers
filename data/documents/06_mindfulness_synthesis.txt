@@ -1,0 +1,18 @@
+Title: Mindfulness and Everyday Wellbeing — Synthesis
+
+Type: Synthesized document
+Sources: 01_newspaper_article.txt, 02_nhs_mindfulness.txt, 03_nccih_evidence.txt, 04_who_stress.txt
+
+Mindfulness involves paying attention to the present moment, including thoughts, feelings, bodily sensations, and surroundings. Instead of immediately reacting to every thought, a person can observe it and gently bring attention back to the present.
+
+Mindfulness does not mean stopping thoughts completely or forcing the mind to become empty. Thoughts naturally arise and disappear. The practice is to notice them without automatically judging or reacting to them.
+
+Mindfulness can be practised through simple daily activities. Examples include paying attention to breathing, noticing the sensations of walking, eating without distractions, and observing bodily sensations. When attention wanders, it can be gently returned to the activity.
+
+Stress is a normal response to challenging situations. However, persistent stress can affect emotional wellbeing and everyday functioning. Techniques such as slow breathing, relaxation, regular physical activity, adequate rest, and mindfulness may help people manage stress.
+
+Mindfulness-based practices may help some people with stress, anxiety, and other aspects of wellbeing, but results vary. They are not a guaranteed solution and should not replace professional care when it is needed. Some people may find meditation uncomfortable or distressing, so practices should be adapted to individual needs.
+
+Overall, mindfulness encourages people to notice their experiences, respond more thoughtfully, and develop greater awareness of everyday life. Consistent, manageable practice is more useful than expecting immediate results.
+
+Note: This is a synthesis of the project's existing sources, not a new independent research article. Claims should be checked against the original source documents.

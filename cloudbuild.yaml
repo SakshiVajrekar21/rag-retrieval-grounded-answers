@@ -1,0 +1,19 @@
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -t
+      - asia-south1-docker.pkg.dev/gcp-ml-model-monitoring/rag-repo/rag-model-api:v1
+      - model-api
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - asia-south1-docker.pkg.dev/gcp-ml-model-monitoring/rag-repo/rag-model-api:v1
+
+images:
+  - asia-south1-docker.pkg.dev/gcp-ml-model-monitoring/rag-repo/rag-model-api:v1
+
+options:
+  logging: CLOUD_LOGGING_ONLY

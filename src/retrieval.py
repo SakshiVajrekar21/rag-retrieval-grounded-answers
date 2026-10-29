@@ -56,28 +56,36 @@ def prepare_chunks():
     return chunks
 
 
-def retrieve(query, top_k=3):
+def retrieve(query, top_k=3, min_score=0.05):
     chunks = prepare_chunks()
 
     if not chunks:
+        print("Warning: No document chunks were loaded.")
         return []
 
     vectorizer = TfidfVectorizer(stop_words="english")
-    document_vectors = vectorizer.fit_transform(
-        [chunk["text"] for chunk in chunks]
-    )
 
-    query_vector = vectorizer.transform([query])
-    scores = cosine_similarity(query_vector, document_vectors).flatten()
+    try:
+        document_vectors = vectorizer.fit_transform(
+            [chunk["text"] for chunk in chunks]
+        )
+        query_vector = vectorizer.transform([query])
+    except ValueError:
+        return []
+
+    scores = cosine_similarity(
+        query_vector, document_vectors
+    ).flatten()
 
     ranked_indices = scores.argsort()[::-1][:top_k]
-
     results = []
 
     for index in ranked_indices:
-        if scores[index] > 0:
+        score = float(scores[index])
+
+        if score >= min_score:
             result = chunks[index].copy()
-            result["score"] = round(float(scores[index]), 4)
+            result["score"] = round(score, 4)
             results.append(result)
 
     return results
@@ -90,13 +98,16 @@ if __name__ == "__main__":
     print(f"Documents loaded: {len(documents)}")
     print(f"Text chunks created: {len(chunks)}")
 
-    question = "What is mindfulness?"
+    question = "Who invented the telephone?"
     print(f"\nQuestion: {question}")
 
     results = retrieve(question, top_k=5)
 
-    for result in results:
-        print(f"\nSource: {result['source']}")
-        print(f"Chunk: {result['chunk_id']}")
-        print(f"Relevance score: {result['score']}")
-        print(f"Text:\n{result['text']}")
+    if not results:
+        print("No relevant sources found.")
+    else:
+        for result in results:
+            print(f"\nSource: {result['source']}")
+            print(f"Chunk: {result['chunk_id']}")
+            print(f"Relevance score: {result['score']}")
+            print(f"Text:\n{result['text']}")

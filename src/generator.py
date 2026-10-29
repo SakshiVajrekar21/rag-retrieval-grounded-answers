@@ -1,48 +1,69 @@
 
 import os
+import re
 import requests
+
+MODEL_ENDPOINT = os.getenv("MODEL_ENDPOINT")
+
+REFUSAL = "I could not find enough information in the provided sources."
 
 
 def generate_answer(question, context=None):
-    endpoint = os.getenv("MODEL_ENDPOINT")
-
-    if not endpoint:
-        raise ValueError(
-            "Please set the MODEL_ENDPOINT environment variable."
-        )
+    if not MODEL_ENDPOINT:
+        raise ValueError("Please set the MODEL_ENDPOINT environment variable.")
 
     if context:
-        prompt = f"""
-Answer the question using only information explicitly stated
-in the context below.
+        # Basic relevance check using meaningful words.
+        question_words = set(
+            re.findall(r"\b[a-zA-Z]{3,}\b", question.lower())
+        )
+        context_words = set(
+            re.findall(r"\b[a-zA-Z]{3,}\b", context.lower())
+        )
 
-Rules:
-1. Do not invent statistics, percentages, or facts.
-2. A study's sample size is not the number of people who
-   experienced an outcome.
-3. If the context does not explicitly answer the question, reply:
-   "I could not find enough information in the provided sources."
-4. Keep the answer brief.
+        meaningful_words = question_words - {
+            "what", "when", "where", "who", "why", "how",
+            "the", "and", "for", "was", "were", "are",
+            "does", "did", "can", "could", "from"
+        }
+
+        overlap = meaningful_words & context_words
+
+        if not meaningful_words or len(overlap) / len(meaningful_words) < 0.5:
+            return REFUSAL
+
+        prompt = f"""
+Answer ONLY using facts explicitly supported by the context.
+Do not use general knowledge or guess.
+If the answer is not supported by the context, reply exactly:
+{REFUSAL}
 
 Context:
 {context}
 
-Question: {question}
+Question:
+{question}
 
 Answer:
 """
     else:
-        prompt = f"""
-Answer the question using your general knowledge.
-
-Question: {question}
-"""
+        prompt = f"Answer this question using general knowledge:\n{question}"
 
     response = requests.post(
-        endpoint,
+        MODEL_ENDPOINT,
         json={"question": prompt},
         timeout=120
     )
-
     response.raise_for_status()
-    return response.json()["answer"]
+
+    data = response.json()
+    answer = (
+        data.get("answer")
+        or data.get("response")
+        or data.get("generated_text")
+    )
+
+    if not answer:
+        raise ValueError(f"Unexpected response format: {data}")
+
+    return answer.strip()
